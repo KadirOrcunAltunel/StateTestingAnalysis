@@ -6,25 +6,45 @@
 The aim of this project is to understand the performance of public school students in Columbia and Montour counties in Pennsylvania.
 It was requested by Jeffrey Emanuel, the director of the Foundation of the Columbia Montour Chamber of Commerce.
 Our professor Dr. Calhoun, of the Bloomsburg University of Pennsylvania, advises and coordinates with us on this project.
-Our team consists of senior data science students [Kadir O. Altunel](https://github.com/KadirOrcunAltunel-zz), [Anna T. Schlecht](https://github.com/atschlecht) and myself [Ronny Toribio](https://github.com/ronny-phoenix).
+Our team consists of senior data science students [Kadir Altunel](https://github.com/KadirOrcunAltunel), [Anna Schlecht](https://github.com/atschlecht) and myself [Ronny Toribio](https://github.com/ronny-phoenix).
 
-##### There are two major tasks in this project:
-- [Data Wrangling](#data-wrangling) - Worked on by me [data_wrangling.R](/data_wrangling.R)
-- [Project Objectives](#project-objectives) - Worked on by our team [objectives.R](/objectives.R)
+##### There are three major tasks in this project:
+- [Data Wrangling](#data-wrangling) - Worked on by me
+    - [data_wrangling.R](/data_wrangling.R)
+- [Project Objectives](#project-objectives) - Worked on by our team
+    - [objectives.R](/objectives.R)
+    - [api.R](/api.R)
+- [Dashboard](#r-shiny-dashboard) - Worked on by me
+    - [app.R](/app.R)
+    - [ui.R](/ui.R)
+    - [server.R](/server.R)
+
+# Abstract
+In our first objective where we view the trends of Columbia and Montour counties we notice the percent of top scores decline from before the pandemic 7.57 percent points in Columbia county and 9.19 in Montour county. For the Keystone tests Columbia county saw a dip of 3.57 points over the 2020 gap. While Montour improved in 2021 by 10 points rebounded back down 10 points. In our second objective we compared the local counties with the state in general. In Pennsylvania as a whole PSSA scores declined 9.85 points after the pandemic. That's 2.28 points worse than Columbia county and roughly the same as Montour county. For the Keystone, Pennsylvania as a whole dipped 2.69 points. Columbia county did slightly worse at 3.57 points. Montour county actually improved by 10.75 points.
+
+In our third objective we compared the trends of Columbia and Montour counties, and state in general in terms of subjects English, Math and Science to evaluate whether COVID-19 caused any significant impact on top scores overall. While PSSA scores dipped slightly for all subjects in 2021, Science scores in Keystone had a sharp decline in 2022 in all levels demonstrating a possible COVID-19 impact.
+
+In our fourth objective, we compared average of top yearly test scores organized by subject. For the PSSA, we have very different results in comparison to the Keystone analysis. The first thing we noticed was a drastic change in scores compared to the other years for 2017. Both english and science scores significantly suffered. In 2017, math scores were also higher than usual. From 2021 to 2022, we saw math and english scores slightly declined from before the pandemic, while science scores remained within the same range as before the pandemic. This is interesting considering it is the highest science score average across all years.
+When analyzing the data for Keystone Score averages by subject, the averages of cumulative scores between english, math, and science. Interestingly, english and science seem to have flucuated within 2021 to 2022. Both of these results demonstrate the possibility for a change in performance on both of these tests due to the COVID-19 pandemic.
+
+In our fifth objective, we were comparing cumulative averages of top yearly scores by district. When comparing both PSSA and Keystone test averages, we could see no noticable correlation between districts and test scores. Because of this, we could not comclude anything related to the impact of COVID-19.
+
+In our sixth objective we compared the cohorts of students passing from one grade to the next during certain years. By taking the PSSA scores for grades 5-8 and Keystone scores for grade 11. The first Cohort ranges from 2016 to 2019. The second goes from 2016 to 2021. The third cohort goes from 2016 to 2022. For Pennsylvania cohort two improves by 14.5 points. While cohort 3 slightly improves 1.87 points. This suggests a slight lag in the effects of COVID from 2021 to 2022. In Columbia county cohort two also improves this time by 16.93 points while cohort three is slightly decline across all grades. Montour counties cohorts don't seem to be affected at all by the pandemic. Cohort two increases by 31.1 points and cohort three increases by 16.57 points. They end up at 95.51 and 82.46 percent top scores for their cohorts respectively. Showing a slight decrease from one to the next.
+
+
+In doing statistical tests and graphing different views of the top scores arranged by different we generally came to the conclusion that COVID 19 had an effect on test scores after 2020 especially on Science.
 
 # Data Wrangling
 The data sets used in this project are the results from the [PSSA](https://www.education.pa.gov/DataAndReporting/Assessments/Pages/PSSA-Results.aspx) and [Keystone](https://www.education.pa.gov/DataAndReporting/Assessments/Pages/Keystone-Exams-Results.aspx) state tests.
 These sets contain aggregate data at the state level for both the PSSA and Keystone.
 They contain more granular data at the school level including counties, districts and schools.
 
-To wrangle this data and prepare it for analysis I created a script in R [data_wrangling.R](/data_wrangling.R) that loads the raw XLSX files and generates 3 CSV files and 2 XLSX files.
+To wrangle this data and prepare it for analysis I created a script in R [data_wrangling.R](/data_wrangling.R) that loads the raw XLSX files and generates 3 CSV files.
 The XLSX files are organized by year (2015 - 2022) and level (state, local).
 
 ##### The files generated are:
 - [pssa.csv](/PSSA/pssa.csv) - A data set containing the PSSA data at the state and local levels for use in R.
-- [pssa.xlsx](/PSSA/pssa.xlsx) - For use by Kadir in tableau
 - [keystone.csv](/Keystone/keystone.csv) - A data set containing the Keystone data at the state and local levels.
-- [keystone.xlsx](Keystone/keystone.xlsx) - For use by Kadir in tableau
 - [cohorts.csv](/Cohorts/cohorts.csv) - A data set containing both PSSA and Keystone data at the state and local levels that follows cohorts.
 
 ### Data Conventions
@@ -35,11 +55,6 @@ The XLSX files are organized by year (2015 - 2022) and level (state, local).
 - Proficient
 - Basic
 - Below Basic
-
-##### The convention used in this project for counties is as follows:
-- 0 is the state level aggregate data
-- 1 is Columbia county
-- 2 is Montour county
 
 ##### The convention used for subjects is the following:
 - English - is used for English, English Language Arts and Literature
@@ -78,190 +93,168 @@ Grade 11 was extracted from the Keystone set.
 1. [How our local districts in Columbia and Montour Counties are trending since 2016?](#objective-1-how-our-local-districts-in-columbia-and-montour-counties-are-trending-since-2016) (Anna)
 2. [How they compare to the state trend since 2016?](#objective-2-how-they-compare-to-the-state-trend-since-2016) (Kadir)
 3. [Is there any COVID impact we might be able to deduce?](#objective-3-is-there-any-covid-impact-we-might-be-able-to-deduce) (Kadir)
-4. [Visualizing the averages of scores from each year.](#objective-4-visualizing-the-averages-of-scores-from-each-year) (Anna)
-   - [As a whole](#as-a-whole)
-   - [Grouped by subject](#grouped-by-subject)
-   - [Grouped by district](#grouped-by-district)
+4. [Visualizing the averages of scores from each year grouped by subject.](#objective-4-visualizing-the-averages-of-scores-from-each-year-grouped-by-subject) (Anna)
 5. [Compare scores between districts.](#objective-5-compare-scores-between-districts) (Anna)
 6. [Study cohorts as they progress from PSSA to Keystone](#objective-6-cohort-analysis) (Ronny)
-7. Any other information that data might tell us?
 
 
 # Objective 1: How our local districts in Columbia and Montour Counties are trending since 2016?
 
 ##### PSSA
 
-![obj1b](/Resources/Obj1bp.png)
+![Obj1PS](/Graphs/Obj1PS.png)
 
-We see from taking the averages of PSSA scores from Columbia(1) and Montour(2) counties along with the State(0), Columbia county has the highest average overall of people scoring in all five categories with major differences being in the top and proficient categories from 2016 to 2022.  Both the Montour county and the state had signicficantly less people scoring within each category, however, Montour county had on average had slightly more people scoring in comparison to the state average with the exception of below basic scores, where the State and montour county averages were equal basically.
+
+
+We see from taking the averages of top PSSA scores from Columbia and Montour counties, Montour county has the highest average overall of people scoring with top scores in comparision to Columbia county from 2016 to 2022. Montour county score averages also stayed pretty regular before and after the pandemic, ranging with the 60 percent region, with only a minor spike leading towards the beginning of the pandemic. Meanwhile with Columbia county scores, before the pandemic they were averaging within the lower 60 percent range and declined the following years after the pandemic to the lower end of 50 percent scores. This could be a result of the pandemic along with the option of opting out of testing provided to students after the pandemic. 
+
 
 ##### Keystone
 
-![obj1a](/Resources/Obj1ak.png)
+![Obj1KS](/Graphs/Obj1KS.png)
 
-We see from taking the averages of Keystone scores from Columbia(1) and Montour(2) counties along with the State(0), Columbia county has the highest average overall of people scoring in all five categories with major differences being in the top and proficient categories from 2016 to 2022. Both the Montour county and the state had signicficantly less people scoring within each category, however, Montour county had on average had slightly more people scoring in comparison to the state average with the exceptions of basic and below basic scores.
+
+We see from taking the averages of top Keystone scores from Columbia and Montour counties, Montour county has the highest average overall of people scoring with top scores in comparision to Columbia county from 2016 to 2022. Montour county score averages also stayed pretty regular before and after the pandemic, ranging with the 80 and 90 percent. Meanwhile with Columbia county scores, before the pandemic they were averaging within the 70 percent range and declined the following years after the pandemic to around 60 and 50 percent. This could be a result of the pandemic along with the option of opting out of testing provided to students after the pandemic. 
 
 
 # Objective 2: How they compare to the state trend since 2016?
 
+
+
+
 ##### PSSA
 
-State | Columbia County | Montour County
+Pennsylvania | Columbia County | Montour County
 :----:|:---------------:|:--------------:
-![obj2_ps_st](/Resources/Obj2statePS.png) | ![obj2_ps_col](/Resources/Obj2colombiaPS.png) | ![obj2_ps_mon](/Resources/Obj2montourPS.png)
+![obj2_ps_st](/Graphs/Obj2statePS.png) | ![obj2_ps_col](/Graphs/Obj2columbiaPS.png) | ![obj2_ps_mon](/Graphs/Obj2montourPS.png)
+
+PSSA data also shows similar observations all levels for the top category.
+
+For state level, average score percentage dipped in 2017 and went back to 2016 levels in 2018 and 2019. There was a decline in 2021 and a slight increase in 2022
+
+In Columbia County, average score percentage stayed steady from 2016 to 2019. There was a decline in percentage in 2021 which showed some recovery in 2022.
+
+In Montour County, average score percentage rose all time high in 2019 in observed years (2016-2022). There was a sharp decline in 2021 and some recovery in 2022. 
 
 ##### Keystone
 
-State | Columbia County | Montour County
+Pennsylvania | Columbia County | Montour County
 :----:|:---------------:|:--------------:
-![obj2_ks_st](/Resources/Obj2stateKS.png) | ![obj2_ks_col](/Resources/Obj2colombiaKS.png) | ![obj2_ks_mon](/Resources/Obj2montourKS.png)
+![obj2_ks_st](/Graphs/Obj2stateKS.png) | ![obj2_ks_col](/Graphs/Obj2columbiaKS.png) | ![obj2_ks_mon](/Graphs/Obj2montourKS.png)
 
-##### ~~PSSA old interpretation~~
 
-**Top** ~~Category showed a slight decline between 2019 - 2021 in State and Colombia County.
-Top Category remained steady in Montour throughout the time frame.~~
+When we look at the graphs, we see that top category, which combines advanced and proficient categories, fluctuates for every levels (State, Montour County, and Columbia County).
 
-**Advanced** ~~Category showed a sharp decline in Colombia County and State from 2019
-to 2021. Montour County Category were pretty much stable.~~
+For state level, average score percentage for top category is trending lower than its high in 2016. We see that average score percentage declined in 2017 and rose in 2018 and then started declining again for the rest of the years.
 
-**Proficient** ~~Category showed an increase in Colombia County in 2021 and then
-it swung back to its previous levels in 2022. State and Montour County fluctuated
-slightly throughout the time frame without any significant observation.~~
+In Columbia County, average score for the top category is also trending lower than its high in 2016. We see that average score percentage declined in 2017 and rose in 2018 and stayed steady for 2019. However, it started to dip in 2021 and 2022
 
-**Basic** ~~Category  dropped slightly in Colombia county from 2018 to 2019. It remained
-steady in State from 2017 to 2019. Montour County showed a slight decline
-in 2019. Basic Category increased in both counties and state in 2021, only to
-drop slightly in Montour County and State in 2022. Colombia County showed
-a moderate decline in Basic Category.~~
+In Montour County, average score for the top category shows fluctuations for the years observed. The average score percentage dipped in 2017 only to rise and dip again in 2018 and 2019 respectively. The same pattern of rise and dip was also observed in 2021 and 2022.
 
-**BelowBasic** ~~Category remained stable for Montour County until 2019. There was a
-sharp increase between 2016 and 2017 in Colombia County and State. Both
-counties and state showed a decline in BelowBasic Category in 2019. There was
-a significant increase in all places in the Category from 2019 to 2021,
-especially in Colombia. From 2021 to 2022, Category remained stable in State 
-and dropped moderately in both counties~~
-
-##### ~~Keystone old interpretation~~
-
-~~We see that in general, Montour and Colombia county fared better than State 
-since 2015 in terms of Category levels. Basic level showed a sharp increase in Montour
-and Colombia counties in 2022. Proficient level also showed a sharp
-increase especially in 2022 for Montour county~~
 
 # Objective 3: Is there any COVID impact we might be able to deduce?
 
 ##### PSSA English
 
-State | Columbia County | Montour County
+Pennsylvania | Columbia County | Montour County
 :----:|:---------------:|:--------------:
-| ![obj3_ps_eng_st](/Resources/Obj3stateEngPS.png) | ![obj2_ps_eng_col](/Resources/Obj3colombiaEngPS.png) | ![obj2_ps_eng_mon](/Resources/Obj3montourEngPS.png) |
+| ![obj3_ps_eng_st](/Graphs/Obj3stateEngPS.png) | ![obj2_ps_eng_col](/Graphs/Obj3columbiaEngPS.png) | ![obj2_ps_eng_mon](/Graphs/Obj3montourEngPS.png) |
 
 ##### PSSA Math
 
-State | Columbia County | Montour County
+Pennsylvania | Columbia County | Montour County
 :----:|:---------------:|:--------------:
-| ![obj3_ps_math_st](/Resources/Obj3stateMathPS.png) | ![obj2_ps_math_col](/Resources/Obj3colombiaMathPS.png) | ![obj2_ps_math_mon](/Resources/Obj3montourMathPS.png) |
+| ![obj3_ps_math_st](/Graphs/Obj3stateMathPS.png) | ![obj2_ps_math_col](/Graphs/Obj3columbiaMathPS.png) | ![obj2_ps_math_mon](/Graphs/Obj3montourMathPS.png) |
 
 ##### PSSA Science
 
-State | Columbia County | Montour County
+Pennsylvania | Columbia County | Montour County
 :----:|:---------------:|:--------------:
-| ![obj3_ps_sci_st](/Resources/Obj3stateSciencePS.png) | ![obj2_ps_sci_col](/Resources/Obj3colombiaSciencePS.png) | ![obj2_ps_sci_mon](/Resources/Obj3montourSciPS.png) |
+| ![obj3_ps_sci_st](/Graphs/Obj3stateSciPS.png) | ![obj2_ps_sci_col](/Graphs/Obj3columbiaSciPS.png) | ![obj2_ps_sci_mon](/Graphs/Obj3montourSciPS.png) |
 
 ##### Keystone English
 
-State | Columbia County | Montour County
+Pennsylvania | Columbia County | Montour County
 :----:|:---------------:|:--------------:
-| ![obj3_ks_eng_st](/Resources/Obj3stateEngKS.png) | ![obj2_ks_eng_col](/Resources/Obj3colombiaEngKS.png) | ![obj2_ks_eng_mon](/Resources/Obj3montourEngKS.png) |
+| ![obj3_ks_eng_st](/Graphs/Obj3stateEngKS.png) | ![obj2_ks_eng_col](/Graphs/Obj3columbiaEngKS.png) | ![obj2_ks_eng_mon](/Graphs/Obj3montourEngKS.png) |
 
 ##### Keystone Math
 
-State | Columbia County | Montour County
+Pennsylvania | Columbia County | Montour County
 :----:|:---------------:|:--------------:
-| ![obj3_ks_math_st](/Resources/Obj3stateMathKS.png) | ![obj2_ks_math_col](/Resources/Obj3colombiaMathKS.png) | ![obj2_ks_math_mon](/Resources/Obj3montourMathKS.png) |
+| ![obj3_ks_math_st](/Graphs/Obj3stateMathKS.png) | ![obj2_ks_math_col](/Graphs/Obj3columbiaMathKS.png) | ![obj2_ks_math_mon](/Graphs/Obj3montourMathKS.png) |
 
 ##### Keystone Science
 
-State | Columbia County | Montour County
+Pennsylvania | Columbia County | Montour County
 :----:|:---------------:|:--------------:
-| ![obj3_ks_sci_st](/Resources/Obj3stateScienceKS.png) | ![obj2_ks_sci_col](/Resources/Obj3colombiaScienceKS.png) | ![obj2_ks_sci_mon](/Resources/Obj3montourSciKS.png) |
+| ![obj3_ks_sci_st](/Graphs/Obj3stateSciKS.png) | ![obj2_ks_sci_col](/Graphs/Obj3columbiaSciKS.png) | ![obj2_ks_sci_mon](/Graphs/Obj3montourSciKS.png) |
 
-##### ~~PSSA old interpretation~~
+##### PSSA ANOVA Summary
 
-~~From 2019 to 2022, Category levels seemed stable for the counties and the state
-There were only slight fluctuations which were inconclusive if COVID affected
-Category levels or not.~~
+```
+                      Df Sum Sq Mean Sq F value   Pr(>F)    
+Year                   1    374     374   2.800  0.09447 .  
+as_factor(County)      1     33      33   0.250  0.61746    
+as_factor(District)    5   1664     333   2.490  0.02952 *  
+as_factor(School)     18   5222     290   2.171  0.00303 ** 
+as_factor(Subject)     2   8434    4217  31.558 3.61e-14 ***
+Scored                 1    363     363   2.717  0.09951 .  
+as_factor(Category)    4 533718  133429 998.497  < 2e-16 ***
+Students               1  38800   38800 290.353  < 2e-16 ***
+Residuals           1601 213942     134                     
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+```
 
-##### ~~Keystone old interpretation~~
+##### Keystone ANOVA Summary
 
-~~Checking Category averages throughout the years for counties and subjects, it
-is interesting to see that COVID didn't impact Math and English for Categorys
-dramatically for Colombia, Montour and State. In fact, there was a significant
-improvement in the scores in 2022 compared to 2019 for math top, advanced
-and proficient Category in Colombia county.
-However, there was a steep decline in Science for Categorys between 2021
-and 2022 throughout the state which may be an indication of a COVID impact.~~
+```
+                     Df Sum Sq Mean Sq F value   Pr(>F)    
+Year                  1    531     531   4.913  0.02698 *  
+as_factor(County)     1    810     810   7.491  0.00636 ** 
+as_factor(District)   7   5450     779   7.202 2.41e-08 ***
+as_factor(School)     1      0       0   0.002  0.96902    
+as_factor(Subject)    2    281     141   1.301  0.27285    
+Scored                1    199     199   1.837  0.17577    
+as_factor(Category)   4 389399   97350 900.500  < 2e-16 ***
+Students              1  87868   87868 812.788  < 2e-16 ***
+Residuals           706  76323     108                     
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+```
 
+When we look at both Keystone and PSSA data, we can clearly see that, COVID-19 has impacted top score average percentages. Especially in 2021, we see a sharp decline in all levels (State, Columbia County and Montour County). However, starting 2022, we see some recovery in percentages in those levels. 
 
-# Objective 4: Visualizing the averages of scores from each year.
-
-### As a whole.
-
-##### Keystone
-
-![obj4ak](/Resources/Obj4ak.png)
-
-When looking at the Keystone Score averages by year, there was no data collected for the 2020 year, as the pandemic haulted all testing. Even so, we see an extreme dip in Top and Proficient scores from 2019 to 2022. There was also a slight increase in Basic and Below Basic scores for the 2022 year.
-
-##### PSSA
-
-![obj4ap](/Resources/Obj4ap.png)
-
-We see when analyzing the data for PPSA Score averages by year, there are little to no changes in scoring and in some cases. Top and advanced scores from 2019 to 2022 slightly suffered most likely due to the pandemic. There was also a slight increase in Basic and Below Basic scores from 2019 to 2022.
-
-### Grouped by subject.
-
-##### PSSA
-
-![obj4bp](/Resources/Obj4bp.png)
-
-Contrary to the Keystone analysis, the data for PSSA score averages by subject, student on average scored highly in Science and English, while having higher below basic and basic scores within Math. Science was the highest subject for both Top and advanced categories, with English remaining the highest subject for proficient scores. 
+However, there's no linearity between years and average score percentages so as to say, we don't see an upward or downward trend every year. The ANOVA table also indicates the absence of linearity in trend without any significant impact between top score average percentages and year.
 
 
-##### Keystone
-
-![obj4bk](/Resources/Obj4bk.png)
-
-We see when analyzing the data for Keystone Score averages by subject, students on average scored highly in Math and English while more likely struggling with science. Both in top and advanced categories, more students scored well on the Math sections, with English being the highest in the proficient category. When looking at the scores for below basic, Science has the highest average for those scoring in th is category.
-
-### Grouped by district.
+# Objective 4: Visualizing the averages of scores from each year grouped by subject.
 
 ##### PSSA
 
-![obj4cp](/Resources/Obj4cp.png)
+![Obj4PSA](/Graphs/Obj4PS.png) 
 
-We can see when analyzing the PSSA average scores grouped by district, that there is a strong amount of top scores from students especially within the Berwick Area School District and Bloomsburg Area School District. We can see, these two school districts amount of students scoring within the top four categories is considerably higher in comparison to other school district. Otherwise, there is no direct correlation between districts.
-
+For the PSSA Top Yearly Testing Averages by Subject, we have very different results in comparison to the Keystone analysis. The first thing we noticed was a drastic change in scores compared to the other years for 2017. Both english and science scores significantly suffered at 42.76% and 25.58% respectively. This is interesting since english scores for PSSAs usually averaged around 50 to 60 percent and science averaged around 60 and 70 percent. In 2017, math scores were also higher than usual at 61.1%, when the averages for the other years ranged from 30 to 40 percent. From 2021 to 2022, we can see math and english scores slightly declined from before the pandemic, while science scores remained within the same range as before the pandemic, and even in the case of 2021, were better than before the pandemic at 72.02%. This is interesting considering it is the highest science score average across all years. These scores seem to correlate with the timing of the pandemic and could be the cause of these scores.
 
 ##### Keystone
 
-![obj4ck](/Resources/Obj4ck.png)
+![Obj4KSA](/Graphs/Obj4KS.png) 
 
-When looking at the Keystone average scores grouped by district, we can see a strong amount of Top and Proficient scores overall. We can see that the majority of average scores remain in the Top category and that there is an extreme difference when comparing to those who scored below basic and basic. Otherwise, there is no clear correlation between districts directly.
-
+We see when analyzing the data for Keystone Score averages by subject, the averages of cumulative scores between english, math, and science. Interestingly, english and science seem to have flucuated within 2021 to 2022. On average before these years, english scores lie around 60 and 70 percent. After 2020, these english scores average between 40 and 50 percent. As for science, scores ranged within 50 to 60 percent all the way up to 2021, however, there was a drastic decline in scores in 2022 with the cumulative average scores for science being on 36.14%. With this information, some subject scores definetely could have been impacted by the most recent pandemic.
 
 # Objective 5: Compare scores between districts.
 
 ##### PSSA
 
-![obj5ap](/Resources/Obj5ap.png)
+![Obj5PS](/Graphs/Obj5PS.png)
 
 When comparing PSSA average scores between districts, there seems to be no correlation between districts and has no conclusive evidence towards an affect due to the pandemic.
 
 
 ##### Keystone
 
-![obj5ak](/Resources/Obj5ak.png)
+![Obj5KS](/Graphs/Obj5KS.png)
 
 When comparing Keystone average scores between districts, there seems to be no correlation between districts and has no conclusive evidence towards an affect due to the pandemic.
 
@@ -270,20 +263,61 @@ When comparing Keystone average scores between districts, there seems to be no c
 
 ##### Cohort timeline
 
-![obj6a_timeline](/Resources/Obj6_timeline.png)
-- Cohort 1: years: 2016 - 2019, grades: 8(PSSA),     11(Keystone)
-- Cohort 2: years: 2016 - 2021, grades: 6 - 8(PSSA), 11(Keystone)
-- Cohort 3: years: 2016 - 2022, grades: 5 - 8(PSSA), 11(Keystone)
+![obj6a_timeline](/Graphs/Obj6_timeline.png)
+```
+            |<------PSSA----->|
+                              |<---Keystone--->|
+         2016, 2017, 2018, 2019, 2020, 2021, 2022
+Cohort 1    8                11
+Cohort 2    6     7     8                11
+Cohort 3    5     6     7     8                11
+```
 
-##### Cohorts 1-3 All Grades Top Scores
+##### Cohorts State
 
-![obj6a](/Resources/Obj6a_cohort_grade.png)
+![obj6a](/Graphs/Obj6_state.png)
 
-<!-- # Objective7 -->
+In cohort 1 we see an increase of 16.94 percentage points from grade 8 to grade 11. In cohort 2 we see the grades stay stable between grades 7 and 8 then rising 14.53 percentage points at grade 11. In cohort 3 we see a dip between grades 5 and 6 of 12.55 percent points. Followed by a rebound to almost the grade 5 level in grade 7. For the rest of the grades their percentages stay stable with no real bump between grades 8 and 11 like in previous cohorts suggesting that they may have affected by the pandemic.
 
-<!-- # Summary/Conclusion -->
+##### Cohorts Columbia
+
+![obj6b_columbia](/Graphs/Obj6_columbia.png)
+
+In cohort 1 Columbia county outperforms the state of pennsylvania. In cohort 2 we're missing grades 5 and 6. Grade 7 begins one point below the state average then overtakes it by a few points in grade 8. In grade 11 Columbia county outperforms the state by around 6 percentage points. Cohort 3 breaks with the state pattern and the grades gradually worsen by up to 4 percentage points in some years. Even so the grades in cohort 3 stay above the state percentages. 
+
+##### Cohorts Montour
+
+![obj6b_montour](/Graphs/Obj6_montour.png)
+
+In cohort 1 Montour county outperforms both the state and Columbia county gaining 24.64 percentage points between grades 8 and 11. In cohort 2 the percentages stay stable above the state from grades 6 to 8. In grade 11 there is a 31.10 point jump in their percentages. Cohort 3 is also higher than both the state and columbia county. There is a 7 point dip from grade 5 to 6. Then it slightly ascends from 61.56 in grade 6 to 65.9 in grade 8. Finally, it jumps 16.57 percent points landing at 82.46 outperforming both the state and columbia county.
+
+# R Shiny Dashboard
+
+![Dashboard](/Resources/dashboard.png)
+
+I've decided to create a dashboard in R Shiny that could be used to explore every objective and interactively change their values. The dashboard can be launched in R Studio and viewed in your web browser. It allows you to create custom views not shown in this README.
+
+##### Setup
+The dashboard works with rstudio and uses the following libraries
+- tidyverse
+- shiny
+
+To install these libraries in rstudio use the function
+```r
+install.packages("tidyverse", "shiny")
+```
+
+##### Running the dashboard
+Once you have the necessary libraries installed you can run the following
+```r
+library(shiny)
+
+runGitHub("StateTestingAnalysis", "ronny-phoenix")
+
+```
 
 # Authors
 - [Ronny Toribio](https://github.com/ronny-phoenix) - Project lead, Data Wrangling, Statistical Analysis
-- [Anna T. Schlecht](https://github.com/atschlecht) - Statistical Analysis
-- [Kadir O. Altunel](https://github.com/KadirOrcunAltunel-zz) - Statistical Analysis
+- [Anna Schlecht](https://github.com/atschlecht) - Statistical Analysis
+- [Kadir Altunel](https://github.com/KadirOrcunAltunel) - Statistical Analysis
+- [Fletcher](/Resources/fletcher.jpg) - Kadir's Pet Cat

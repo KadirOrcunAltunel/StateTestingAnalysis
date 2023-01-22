@@ -1,7 +1,7 @@
 # @author:  Ronny Toribio
 # @project: State Testing Analysis
-# @file:    testing_data
-# @desc:    Loads and organizes the testing data
+# @file:    data_wrangling.R
+# @desc:    Loads and organizes the testing dataset
 
 library(tidyverse)
 
@@ -118,9 +118,6 @@ ks.st = ks.st %>% mutate(District="", School="", County="State")
 ks = bind_rows(ks.st, ks.sc) %>% arrange(Year)
 rm(ks.sc)
 rm(ks.st)
-ks = ks %>% mutate(across(County, str_replace, "State", "0"))
-ks = ks %>% mutate(across(County, str_replace, "Columbia", "1"))
-ks = ks %>% mutate(across(County, str_replace, "Montour", "2"))
 ks = ks %>% mutate(across(Subject, str_replace, "E", "English"))
 ks = ks %>% mutate(across(Subject, str_replace, "M", "Math"))
 ks = ks %>% mutate(across(Subject, str_replace, "S", "Science"))
@@ -151,8 +148,6 @@ ks = ks %>% filter(!is.na(Score))
 
 # Export the Keystone data set as CSV for R and XLSX for tableau
 write_csv(ks, "Keystone/keystone.csv")
-write_excel_csv(ks, "Keystone/keystone.xlsx")
-
 
 # PSSA school level data
 ps.sc.2016 = readxl::read_xlsx("PSSA/School/2016.xlsx", skip=4)
@@ -283,9 +278,6 @@ ps.st = ps.st %>% mutate(District="", School="", School="", County="State")
 ps = bind_rows(ps.st, ps.sc) %>% arrange(Year)
 rm(ps.sc)
 rm(ps.st)
-ps = ps %>% mutate(across(County, str_replace, "State", "0"))
-ps = ps %>% mutate(across(County, str_replace, "Columbia", "1"))
-ps = ps %>% mutate(across(County, str_replace, "Montour", "2"))
 ps = ps %>% mutate(across(Subject, str_replace, "English Language Arts", "English"))
 ps = ps %>% mutate(across(Grade, str_replace, "State Total", "Total"))
 ps = ps %>% mutate(across(Grade, str_replace, "School Total", "Total"))
@@ -323,28 +315,27 @@ ps = ps %>% filter(!is.na(Score))
 
 # Export PSSA data to CSV for R and XLSX for tableau
 write_csv(ps, "PSSA/pssa.csv")
-write_excel_csv(ps, "PSSA/pssa.xlsx")
 
 
 # Cohorts
 cohort.1 = bind_rows(
-  ps2 %>% filter(Year==2016 & Grade==8 & County!=0),
-  ks %>% filter(Year==2019 & County!=0) %>% mutate(Grade="11", SchoolNum="")
+  ps2 %>% filter(Year==2016 & Grade==8),
+  ks %>% filter(Year==2019) %>% mutate(Grade="11", SchoolNum="")
 ) %>% mutate(Cohort=1)
 
 cohort.2 = bind_rows(
-  ps2 %>% filter(Year==2016 & Grade==6 & County!=0),
-  ps2 %>% filter(Year==2017 & Grade==7 & County!=0),
-  ps2 %>% filter(Year==2018 & Grade==8 & County!=0),
-  ks %>% filter(Year==2021 & County!=0) %>% mutate(Grade="11", SchoolNum="")
+  ps2 %>% filter(Year==2016 & Grade==6),
+  ps2 %>% filter(Year==2017 & Grade==7),
+  ps2 %>% filter(Year==2018 & Grade==8),
+  ks %>% filter(Year==2021) %>% mutate(Grade="11", SchoolNum="")
 ) %>% mutate(Cohort=2)
 
 cohort.3 = bind_rows(
-  ps2 %>% filter(Year==2016 & Grade==5 & County!=0),
-  ps2 %>% filter(Year==2017 & Grade==6 & County!=0),
-  ps2 %>% filter(Year==2018 & Grade==7 & County!=0),
-  ps2 %>% filter(Year==2019 & Grade==8 & County!=0),
-  ks %>% filter(Year==2022 & County!=0) %>% mutate(Grade="11", SchoolNum="")
+  ps2 %>% filter(Year==2016 & Grade==5),
+  ps2 %>% filter(Year==2017 & Grade==6),
+  ps2 %>% filter(Year==2018 & Grade==7),
+  ps2 %>% filter(Year==2019 & Grade==8),
+  ks %>% filter(Year==2022) %>% mutate(Grade="11", SchoolNum="")
 ) %>% mutate(Cohort=3)
 rm(ps2)
 
@@ -360,9 +351,6 @@ rm(cohort.3)
 
 # Organize Cohorts columns
 cohorts = cohorts %>% select(Cohort, Year, County, District, School, Grade, Subject, Scored, Category, Score, Students)
-
-# Drop NA's in Score
-cohorts = cohorts %>% filter(!is.na(Score))
 
 # Export Cohorts set to CSV for R
 write_csv(cohorts, "Cohorts/cohorts.csv")
